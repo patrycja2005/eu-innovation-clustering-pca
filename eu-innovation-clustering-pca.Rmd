@@ -1,3 +1,10 @@
+---
+title: "eu-pca-clustering"
+author: "Patrycja Kornobis"
+date: "`r Sys.Date()`"
+output: github_document
+---
+``` {r setup}
 # Załadowanie potrzebnych bibliotek
 library(readxl)
 library(tidyverse)
@@ -10,14 +17,14 @@ library(factoextra)
 library(DataExplorer)
 library(fpc) 
 library(corrplot)
+```
 
-
-
+```{r}
 #============================== P  C  A ========================================
 
 
 # załadownaie w przekształcenie danych
-eu <- read_excel("data/Zeszyt1.xlsx")
+eu <- read_excel("data/dane.xlsx")
 names(eu) <- c( "Kraj" , "Wyższe wyksz.", "Personel w R&D",
                 "Specjaliści ICT", "Patenty", "Wydatki na R&D", "Kursy online")
 
@@ -360,3 +367,4 @@ eu.RC %>%
        color = "Klaster",
        fill = "Klaster")
 
+```
