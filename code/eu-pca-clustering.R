@@ -11,7 +11,14 @@ library(DataExplorer)
 library(fpc) 
 library(corrplot)
 
+install.packages("usethis")
+library(usethis)
 
+create_github_token()
+
+gitcreds::gitcreds_set()
+
+use_git()
 
 #============================== P  C  A ========================================
 
