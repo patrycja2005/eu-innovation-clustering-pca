@@ -1,5 +1,11 @@
 # 🇪🇺 Analiza Potencjału Innowacyjnego i Cyfrowego Krajów Europy (PCA & Clustering)
 
+
+## Kod i Środowisko
+* **Język:** R
+* **Pakiety:** `tidyverse`, `FactoMineR`, `factoextra`, `cluster`, `psych`
+* **Skrypty:** Pełne skrypty analityczne znajdują się w folderze [`code/`](./code/).
+
 ##  1. Opis i cel projektu
 
 Celem projektu jest analiza porównawcza potencjału innowacyjnego i cyfrowego **31 państw** (kraje UE oraz m.in. Norwegia, Szwajcaria, Turcja). Wybrane zmienne odzwierciedlają poziom edukacji, zaawansowanie technologiczne rynku pracy oraz aktywność naukową. 
