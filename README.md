@@ -144,7 +144,7 @@ Ta składowa koncentruje się na profilu społeczeństwa i jego umiejętnościac
     </td>
     <td width="45%" valign="top">
 
-#### Rozmieszczenie krajów (RC1 vs RC2)
+**Rozmieszczenie krajów (RC1 vs RC2)**
 * **Szwecja i Finlandia:** Liderzy w obu wymiarach.
 * **Niemcy:** Lider jednostronny (wysoki potencjał B+R, przeciętny wymiar społeczny).
 * **Irlandia i Luksemburg:** Liderzy w zakresie kapitału ludzkiego i ICT.
@@ -155,7 +155,7 @@ Ta składowa koncentruje się na profilu społeczeństwa i jego umiejętnościac
   </tr>
 </table>
 
----
+
 
 ##  4. Analiza Skupień (Clustering)
 
@@ -164,7 +164,7 @@ W celu identyfikacji podobnych grup krajów przetestowano dwie metody grupowania
 * **Metoda hierarchiczna (Ward + odległość euklidesowa):** Wskazała na podział na **3 klastry** (wyznaczony z dendrogramu, stabilność bootstrap = $0.63$).
 * **Metoda k-średnich (k-means):** Wskazała na **2 klastry** (wyznaczone na podstawie WSS, Calinskiego-Harabasza, Average Silhouette oraz wyższej stabilności bootstrap = $0.91$).
 
----
+
 
 ### Wybór metody i uzasadnienie
 
