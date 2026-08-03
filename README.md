@@ -28,7 +28,7 @@ Dane są znormalizowane (wskaźniki procentowe lub *per capita*), co pozwala na 
 
 ---
 
-## 🛠️ 2. Przygotowanie danych
+## 2. Przygotowanie danych
 
 W pierwszym etapie przeprowadzono wstępną analizę danych oraz analizę zależności.
 
@@ -159,6 +159,98 @@ Ta składowa koncentruje się na profilu społeczeństwa i jego umiejętnościac
 
 ##  4. Analiza Skupień (Clustering)
 
+W celu identyfikacji podobnych grup krajów przetestowano dwie metody grupowania:
 
+* **Metoda hierarchiczna (Ward + odległość euklidesowa):** Wskazała na podział na **3 klastry** (wyznaczony z dendrogramu, stabilność bootstrap = $0.63$).
+* **Metoda k-średnich (k-means):** Wskazała na **2 klastry** (wyznaczone na podstawie WSS, Calinskiego-Harabasza, Average Silhouette oraz wyższej stabilności bootstrap = $0.91$).
+
+---
+
+### Wybór metody i uzasadnienie
+
+Do głębszej analizy przyjęto **metodę hierarchiczną Warda (3 klastry)**. 
+
+Mimo że metoda $k$-średnich dała wyższą stabilność matematyczną, podział na **3 grupy** pozwala uchwycić grupę krajów o charakterze **pośrednim** (kraje o wysokim kapitale ludzkim, ale umiarkowanych nakładach B+R). Taki podział daje znacznie ciekawszą interpretację biznesową i lepiej odzwierciedla realne zróżnicowanie innowacyjne w Europie.
+
+#### **Podział grup metodą hierarchiczną przedstawia dendrogram:**
+
+![wykres 6](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-9.png)
+
+### Profilowanie i interpretacja klastrów
+
+W celu określenia profilu każdego klastra oraz wskazania kluczowych różnic między nimi przeanalizowano rozkłady poszczególnych zmiennych w obrębie grup przy użyciu wykresów pudełkowych (boxplotów).
+
+![wykres 7](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-10.png)
+
+
+#### **Klaster 1:** Kraje wysoko rozwinięte (Liderzy innowacji)
+* **Przykładowe kraje:** Szwecja, Finlandia, Dania, Niemcy, Austria.
+* **Opis:** Najbardziej zaawansowane gospodarki oparte na wiedzy. Łączą najwyższy poziom rozwoju technologicznego z silnym kapitałem ludzkim.
+* **Charakterystyka:**
+  * Bardzo wysokie wydatki na B+R (% PKB)
+  * Wysoka liczba zgłoszeń patentowych
+  * Duży udział specjalistów ICT w zatrudnieniu
+  * Wysoki poziom wykształcenia wyższego
+
+
+#### **Klaster 2:** Kraje słabiej rozwinięte (Niski potencjał B+R)
+* **Przykładowe kraje:** Polska, Rumunia, Bułgaria, Węgry.
+* **Opis:** Grupa obejmująca kraje o relatywnie najniższym poziomie rozwoju innowacyjnego, ograniczonych inwestycjach w naukę oraz niższej aktywności technologicznej.
+* **Charakterystyka:**
+  * Niskie nakłady finansowe na B+R
+  * Niska liczba generowanych patentów
+  * Niższy poziom wykształcenia formalnego i samorozwoju cyfrowego
+
+
+#### **Klaster 3:** Kraje umiarkowanie rozwinięte (Wysoki kapitał ludzki)
+* **Przykładowe kraje:** Hiszpania, Irlandia, Estonia, Norwegia.
+* **Opis:** Gospodarki stabilne, dysponujące bardzo dobrze wykształconym społeczeństwem otwartym na samorozwój, co jednak nie przekłada się jeszcze w pełni na bezpośrednie wyniki innowacyjne (patenty i duże nakłady B+R).
+* **Charakterystyka:**
+  * Średnie/przeciętne wartości wskaźników innowacyjności (B+R, patenty)
+  * Wysoki poziom wykształcenia wyższego i aktywności w kursach online
+  * Przeciętny, ale stabilny poziom nasycenia sektora ICT
+
+ 
+## 5. Synteza: Połączenie PCA i Analizy Skupień
+
+Poniższy wykres przedstawia rozmieszczenie krajów europejskich w przestrzeni dwóch głównych składowych wyznaczonych metodą PCA (RC1 vs RC2). Kolorami zaznaczono przynależność do 3 klastrów wyodrębnionych metodą Warda.
+
+<table>
+  <tr>
+    <td width="55%" valign="top">
+      <img src="eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-18.png" alt="PCA + Clustering Graph">
+    </td>
+    <td width="45%" valign="top">
+
+### Kluczowe obserwacje przestrzenne:
+* **Północno-Zachodni rdzeń:** Skupia liderów (wysokie wartości RC1 i RC2).
+* **Podział regionalny:** Wyraźny podział geograficzno-gospodarczy na Europę Zachodnią/Północną oraz Środkowo-Wschodnią i Południową.
+* **Asymetria rozwoju:** Kraje z wysokim RC2 (edukacja) nie zawsze osiągają wysoki poziom RC1 (infrastruktura i patenty).
+
+    </td>
+  </tr>
+</table>
+
+## 6. Podsumowanie i Wnioski
+
+Przeprowadzona analiza wykazała, że zróżnicowanie potencjału innowacyjnego i cyfrowego krajów europejskich można w pełni wyjaśnić za pomocą **dwóch głównych wymiarów**: zaangażowania w działalność badawczo-rozwojową (**RC1**) oraz poziomu kapitału ludzkiego i kompetencji cyfrowych (**RC2**).
+
+
+
+###  Kluczowe wnioski:
+
+* **Synergia jako klucz do sukcesu (Liderzy):**  
+  Najwyższy poziom rozwoju osiągają państwa Europy Północno-Zachodniej (kraje skandynawskie i niemieckojęzyczne). Ich przewaga wynika z harmonijnego łączenia obu wymiarów — stabilność gospodarcza i silne instytucje pozwalają na efektywne przekształcanie wysokiego poziomu edukacji w realne patenty i innowacje.
+
+* **Edukacja to za mało (Niewykorzystany potencjał):**  
+  Obecność grupy krajów o wysokim kapitale ludzkim, lecz przeciętnych wynikach innowacyjnych (np. Hiszpania, Irlandia, Estonia) dowodzi, że **sama edukacja i wysokie kompetencje cyfrowe obywateli nie wystarczą**. Bez odpowiednich nakładów finansowych na B+R oraz rozbudowanej infrastruktury przemysłowej potencjał społeczny pozostaje nie w pełni skomercjalizowany.
+
+* **Bariery strukturalne i historyczne (Gospodarki w transformacji):**  
+  Kraje Europy Środkowo-Wschodniej oraz części Południowej wykazują najniższe wartości w obu składowych. Wynika to głównie z uwarunkowań historycznych, niższych nakładów na naukę oraz faktu, że ich gospodarki wciąż w dużej mierze opierają się na sektorach tradycyjnych.
+
+
+
+> **Konkluzja Końcowa:**  
+> Analiza skupień potwierdziła wyraźny podział Europy na rdzeń innowacyjny oraz peryferie, wyróżniając jednocześnie istotną grupę pośrednią. Ostatecznie o przewadze konkurencyjnej danego kraju nie decyduje sam poziom wykształcenia obywateli, lecz **zdolność gospodarki do integracji kapitału ludzkiego z zapleczem badawczo-rozwojowym**.
 ---
 *Projekt zrealizowany w RStudio.*
