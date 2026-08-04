@@ -38,9 +38,36 @@ Dane są znormalizowane (wskaźniki procentowe lub *per capita*), co pozwala na 
 
 W pierwszym etapie przeprowadzono wstępną analizę danych oraz analizę zależności.
 
+<details>
+<summary> Kod </summary>
+
+```r
+pairs(eu[, -1])
+```
+</details>
+  
 ![wykres 1](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-1.png)
 
 Na tej podstawie zauważono obecność wartości odstającej w zmiennej odnoszącej się do liczby składanych patentów. Analiza wykresu słupkowego wykazała, że krajem znacząco odbiegającym od pozostałych jest *Szwajcaria*.
+
+<details>
+<summary> Kod </summary>
+
+```r
+# identyfikacja kraju z odstającą ilością patentów
+eu %>% 
+  ggplot(aes(x = Patenty, 
+             y = reorder(Kraj, Patenty), 
+             fill = Patenty)) + 
+  geom_col() +
+  scale_fill_gradient(low = "yellow", high = "red") +
+  theme_minimal() +
+  labs( y = "Kraj",
+        title = "Ilość patentów na mieszkańca - Skala gradientowa", 
+        fill = "Ilość patentów")
+# teraz możemy zauważyć, że tym krajem jest Szwajcarja
+```
+</details>
 
 ![wykres 2](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-2.png)
 
@@ -55,6 +82,15 @@ Zanim przystąpimy do redukcji wymiarów, należy sprawdzić zasadność użycia
 #### **A. Macierz korelacji:**
 
 Analiza macierzy korelacji potwierdziła silne powiązania między zmiennymi, co uzasadnia użycie PCA. 
+
+<details>
+<summary> Kod </summary>
+
+```r
+# wykres korelacji
+corrplot(cor(eu[, -1]), order = "hclust", tl.cex = 0.7) 
+```
+</details>
 
 ![wykres 3](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-3.png)
 
