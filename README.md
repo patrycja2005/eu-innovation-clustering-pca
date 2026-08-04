@@ -104,11 +104,32 @@ corrplot(cor(eu[, -1]), order = "hclust", tl.cex = 0.7)
 * H0: Macierz korelacji zmiennych jest macierzą jednostkową. Oznacza to, że zmienne nie są ze sobą skorelowane, a przeprowadzenie analizy PCA jest bezcelowe.
 * H1: Macierz korelacji nie jest macierzą jednostkową. Między zmiennymi występują istotne statystycznie zależności, co uzasadnia zastosowanie analizy składowych głównych.
 
+<details>
+<summary> Kod </summary>
+
+```r
+# test bartletta
+cortest.bartlett(cor(eu[, -1])) 
+# p-value < 0,05  
+```
+</details>
+
 $p\text{-value} = 3.42 \cdot 10^{-86} < 0.05$ $\rightarrow$ Odrzucenie $H_0$
 Między zmiennymi występują istotne zależności
 
 
 #### **C. Wskaźnik KMO:** 
+
+<details>
+<summary> Kod </summary>
+
+```r
+# KMO kryterium
+KMO(cor(eu[, -1])) 
+# Overall MSA =  0.68 
+```
+</details>
+
 $\text{Overall MSA} = 0.68$ (powyżej progu $0.5$) $\rightarrow$ 
 Umiarkowana adekwatność doboru zmiennych
 
@@ -117,6 +138,21 @@ Umiarkowana adekwatność doboru zmiennych
 ### Uzasadnienie wyboru składowych
 
 #### A. Wyniki PCA dla 6 składowych
+
+<details>
+<summary> Kod </summary>
+
+```r
+# najpierw przeprowadzamy PCA dla 6 składowych, 
+# aby wybrać ostateczną liczbe nowych wymiarów
+pr.eu0 <- principal( eu[, -1], nfactors = 6, rotate = "none")
+pr.eu0$loadings
+
+# pierwsza skladowa wyjasnia 62%, druga 19% zmiennościu zbioru danych
+# w sumie pierwsze 2 wyjasniaja ok. 80% zmiennosci, co jest dobrym wynikiem
+```
+</details>
+
 | Wskaźnik | PC1 | PC2 | PC3 | PC4 | PC5 | PC6 |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **SS loadings (Wartość własna)** | **3.708** | **1.128** | 0.530 | 0.422 | 0.142 | 0.071 |
@@ -126,6 +162,19 @@ Umiarkowana adekwatność doboru zmiennych
 Pierwsza składowa (PC1) tłumaczy aż 61,8% całkowitej zmienności danych, natomiast druga (PC2) kolejne 18,8%. Łącznie dwie pierwsze składowe wyjaśniają 80,6% (Cumulative Var = 0,806) wariancji całego zbioru.
 
 #### B. Wykres osypiska
+
+<details>
+<summary> Kod </summary>
+
+```r
+# wykres osypiska
+fviz_screeplot( PCA(eu[, -1],graph = FALSE ), barfill = "lightblue", 
+                addlabels = TRUE, choice = "eigenvalue") +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "red")
+# dwie skladowe powyzej 1 (kryterium Kaisera)
+```
+</details>
+
 
 ![wykres 4](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-4.png)
 
@@ -139,6 +188,19 @@ Wybór dwóch wymiarów pozwala na uproszczenie analizy z 6 zmiennych do zaledwi
 
 Dla łatwiejszej interpretacji nowych zmiennych dokonano rotacji Varimax. Następnie przeanalizowano otrzymane ładunki czynnikowe. Ładunki te określają siłę korelacji między oryginalnymi zmiennymi a nowymi składowymi (RC1 i RC2).
 
+<details>
+<summary> Kod </summary>
+
+```r
+# wykonujemy dodatkową rotacje dla łatwiejszej interpretacji składowych 
+pr.eu <- principal( eu[, -1], nfactors = 2, rotate = "varimax")
+pr.eu$loadings
+
+old.par <- par() 
+biplot(pr.eu, col = c("darkgrey", "#1E90FF"), pch = 16)
+par(old.par)
+```
+</details>
 
 <table>
   <tr>
@@ -179,6 +241,21 @@ Ta składowa koncentruje się na profilu społeczeństwa i jego umiejętnościac
 
 ### Rozmieszczenie krajów w przestrzeni RC1 vs RC2
 
+<details>
+<summary> Kod </summary>
+
+```r
+# Rozmieszczenie krajów w przestrzeni nowych składowych
+eu.RC %>% 
+  ggplot( aes( x=`Poziom zaangażowania kraju w badania i rozwój`,
+               y = `Poziom wykształcenia i wiedzy społeczeństwa`))+
+  geom_point()+
+  geom_text(aes(label = Kraj), vjust = -1, size = 3)+
+  theme_light()+
+  labs(title = "Rozmieszczenie krajów w przestrzeni nowych składowych")
+```
+</details>
+
 <table>
   <tr>
     <td width="55%" valign="top">
@@ -216,11 +293,76 @@ Mimo że metoda $k$-średnich dała wyższą stabilność matematyczną, podzia�
 
 #### **Podział grup metodą hierarchiczną przedstawia dendrogram:**
 
+<details>
+<summary> Kod </summary>
+
+```r
+# grupowanie HIERARCHICZNE -----------------------------------------------------
+
+d <- dist(eu.scaled, method = "euclidean") # macierz dystnsu 
+
+## grupowanie metodą WARDERA ---------------------------------------------------
+hc1 <- hclust(d, method = "ward.D2")       # tworzymy obiekt klasy hclust
+
+# dendogram 
+plot(hc1, 
+     labels = eu$Kraj, 
+     cex = 0.6,
+     main = "Analiza skupień krajów europejskich", 
+     sub = "",                                    
+     xlab = "Kraje",                              
+     ylab = "Dystans (Euklidesowy)"               
+)
+# na dendogramie widać wyraźny podział na 2, 3 grupy 
+
+# sprawdzamy ich liczebność
+# podział na 2 grupy 
+cutree(hc1, k = 2) %>% table()
+# podział na 3 grupy
+cutree(hc1, k = 3) %>% table()
+
+# wybieramy podziałna 3 grupy 
+plot(hc1, 
+     labels = eu$Kraj, 
+     cex = 0.6,
+     main = "Analiza skupień krajów europejskich", 
+     sub = "",                                    
+     xlab = "Kraje",                              
+     ylab = "Dystans (Euklidesowy)"               
+)
+rect.hclust(hc1, k = 3, border = c("#F8766D", "#619CFF","#00BA38"))
+
+# stabilność grup 
+clusterboot(eu.scaled, B = 500,
+            clustermethod = hclustCBI, method = "ward.D2", k = 3)
+```
+</details>
+
 ![wykres 6](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-9.png)
 
 ### Profilowanie i interpretacja klastrów
 
 W celu określenia profilu każdego klastra oraz wskazania kluczowych różnic między nimi przeanalizowano rozkłady poszczególnych zmiennych w obrębie grup przy użyciu wykresów pudełkowych (boxplotów).
+
+<details>
+<summary> Kod </summary>
+
+```r
+## CHARAKTERYSTYKA grup ---------------------------------------------------------
+
+# dodajemy nową kolumne do danych z etykietkami grupy
+eu$cluster.w <- cutree(hc1, k = 3) %>% factor()
+
+
+# na podstawie wykresów interpretujemy powstałe grupy
+plot_boxplot(eu, 
+             by = "cluster.w", 
+             ncol = 3, 
+             geom_boxplot_args = list("fill" = "#CAE1FF"),
+             title = "Porównanie klastrów", 
+             ggtheme = theme_bw())
+```
+</details>
 
 ![wykres 7](eu-innovation-clustering-pca_files/figure-gfm/unnamed-chunk-1-10.png)
 
@@ -256,6 +398,35 @@ W celu określenia profilu każdego klastra oraz wskazania kluczowych różnic m
 ## 5. Synteza: Połączenie PCA i Analizy Skupień
 
 Poniższy wykres przedstawia rozmieszczenie krajów europejskich w przestrzeni dwóch głównych składowych wyznaczonych metodą PCA (RC1 vs RC2). Kolorami zaznaczono przynależność do 3 klastrów wyodrębnionych metodą Warda.
+
+<details>
+<summary> Kod </summary>
+
+```r
+# dokładamy etykietki grupowań do ramki danych z wartościami 
+# nowych wymiarów
+eu.RC$cluster.w <- eu$cluster.w
+
+
+# nowe wymiary i grupowanie wardera + elipsa
+eu.RC %>% 
+  ggplot(aes(x = `Poziom zaangażowania kraju w badania i rozwój`, 
+             y = `Poziom wykształcenia i wiedzy społeczeństwa`,
+             color = factor(cluster.w))) + 
+  geom_point() +
+  stat_ellipse(aes(fill = factor(cluster.w)), 
+               geom = "polygon", 
+               alpha = 0.15, 
+               level = 0.95) + 
+  geom_text(aes(label = Kraj), vjust = -1, size = 2.5) +
+  theme_light() +
+  labs(title = "Rozmieszczenie krajów w przestrzeni nowych składowych",
+       color = "Klaster",
+       fill = "Klaster")
+
+
+```
+</details>
 
 <table>
   <tr>
